@@ -1,19 +1,28 @@
+# Should instal tweepy
+# pip install tweepy==4.10.1
 
-# main code start
-import twitter, time
 
-# twitter api connect
-twitter_consumer_key = 'xE2KeJ6dd98hHSR5XOmPr615K'
-twitter_consumer_secret = 'IDiGtGAgjUePiQcjZH2ODOfkYC2ytwkhbM0Pr5EBwv7qGeyxz9'
-twitter_access_token = '1589819209575698432-T7I2dl9tmGrlWNQxyyhgzUWnbx5nGn'
-twitter_access_secret = 'YcsAwIs6KUmMUlZXowgKruavACoRIh2mGgU4tT7xrOvQJ'
+import tweepy
 
-twitter_api = twitter.Api(consumer_key=twitter_consumer_key,
-                          consumer_secret=twitter_consumer_secret, 
-                          access_token_key=twitter_access_token, 
-                          access_token_secret=twitter_access_secret)
-query = "gun ownership"
-search = twitter_api.GetSearch(term=query, count=100) 
+consumer_key = 'BI9PK5YrIGqarth9MKs499B8J'
+consumer_secret = 'aovhMmmp9LmjcLJqUn2JaekTL8IByiOorO3jGI4XOf75xcyOg4'
+access_token = '1589819209575698432-otNSUl4YPgXzFCF7sll3ZzjCcdV8Fc'
+access_token_secret = 'MPWWPZa0u6y8r6cpcdLC6NOXuZ5BZoaN9jX4utXnhUPyg'
+bearer_token = 'AAAAAAAAAAAAAAAAAAAAAC9AjAEAAAAAYsxpicwvSqqnYCLj2KiaLePJ8VM%3DZWyWRfeSk2vAcgUJaWVbAHsjwN9fy8yV1kZ5rxZgv07ohQ5C0S'
 
-for i in search:
-    print(i.text) 
+client = tweepy.Client(bearer_token=bearer_token)
+client = tweepy.Client(
+    consumer_key=consumer_key, consumer_secret=consumer_secret,
+    access_token=access_token, access_token_secret=access_token_secret
+)
+
+keyword = "gun ownership"
+
+api_result = []
+
+tweet = client.search_recent_tweets(query = keyword, max_results=100, user_auth=True)
+
+for tw in tweet:
+    for t in tw:
+        print(t)
+        print("\n")
