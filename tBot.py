@@ -1,8 +1,8 @@
 # Should instal tweepy
 # pip install tweepy==4.10.1
 
-
 import tweepy
+import pandas as pd
 
 consumer_key = 'BI9PK5YrIGqarth9MKs499B8J'
 consumer_secret = 'aovhMmmp9LmjcLJqUn2JaekTL8IByiOorO3jGI4XOf75xcyOg4'
@@ -17,6 +17,7 @@ client = tweepy.Client(
 )
 
 keyword = "gun ownership"
+data = pd.DataFrame()
 
 api_result = []
 
@@ -24,5 +25,7 @@ tweet = client.search_recent_tweets(query = keyword, max_results=100, user_auth=
 
 for tw in tweet:
     for t in tw:
-        print(t)
-        print("\n")
+        api_result.append(t)
+
+data['tweets'] = api_result
+data.to_csv("outputs.csv")
