@@ -96,43 +96,30 @@ print("training ...\n")
 total_loss = 0
 model.train()
 
-# 데이터로더에서 배치만큼 반복하여 가져옴
 for step, batch in enumerate(train_dataloader):
-    # 경과 정보 표시
-    # 배치를 GPU에 넣음
+
     batch = tuple(t.to(device) for t in batch)
 
-    # 배치에서 데이터 추출
     b_input_ids, b_input_mask, b_labels = batch
 
-    # Forward 수행
     outputs = model(b_input_ids,
                     token_type_ids=None,
                     attention_mask=b_input_mask,
                     labels=b_labels)
 
-    # 로스 구함
     loss = outputs[0]
 
-    # 총 로스 계산
     total_loss += loss.item()
-
-    # Backward 수행으로 그래디언트 계산
     loss.backward()
 
-    # 그래디언트 클리핑
     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
 
-    # 그래디언트를 통해 가중치 파라미터 업데이트
     optimizer.step()
 
-    # 스케줄러로 학습률 감소
     scheduler.step()
 
-    # 그래디언트 초기화
     model.zero_grad()
 
-# 평균 로스 계산
 avg_train_loss = total_loss / len(train_dataloader)
 
 print("")
@@ -145,42 +132,28 @@ print("  Average training loss: {0:.2f}".format(avg_train_loss))
 print("")
 print("Running Validation...")
 
-
-# 평가모드로 변경
 model.eval()
 
-# 변수 초기화
 eval_loss, eval_accuracy = 0, 0
 nb_eval_steps, nb_eval_examples = 0, 0
 
-# 데이터로더에서 배치만큼 반복하여 가져옴
 for batch in validation_dataloader:
-    # 배치를 GPU에 넣음
     batch = tuple(t.to(device) for t in batch)
 
-    # 배치에서 데이터 추출
     b_input_ids, b_input_mask, b_labels = batch
 
-    # 그래디언트 계산 안함
     with torch.no_grad():
-        # Forward 수행
         outputs = model(b_input_ids,
                         token_type_ids=None,
                         attention_mask=b_input_mask)
 
-    # 로스 구함
     logits = outputs[0]
 
-    # CPU로 데이터 이동
     logits = logits.detach().cpu().numpy()
     label_ids = b_labels.to('cpu').numpy()
 
-    # 출력 로짓과 라벨을 비교하여 정확도 계산
     tmp_eval_accuracy = flat_accuracy(logits, label_ids)
     eval_accuracy += tmp_eval_accuracy
     nb_eval_steps += 1
 
 print("  Accuracy: {0:.2f}".format(eval_accuracy / nb_eval_steps))
-
-print("")
-print("Training complete!")
